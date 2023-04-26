@@ -6,10 +6,14 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiFile
 
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
+        val inspectionProfile = ProjectInspectionProfileManager.getInstance(file.project).currentProfile
+        val inspectionToolDisplayKey = inspectionProfile.getInspectionTool("HamlLint", file)?.displayKey
+        if (!inspectionProfile.isToolEnabled(inspectionToolDisplayKey, file)) return null
         val fileText = file.viewProvider.document.charsSequence
         val contentRoot = ProjectFileIndex
             .getInstance(file.project)
