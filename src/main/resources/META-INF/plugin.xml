@@ -28,6 +28,11 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="Haml"
+                         implementationClass="me.benmelz.jetbrains.plugins.hamllint.HamlLintInspection"
+                         groupName="Haml"
+                         displayName="HamlLint"
+                         enabledByDefault="true" />
         <externalAnnotator language="Haml"
                            implementationClass="me.benmelz.jetbrains.plugins.hamllint.HamlLintExternalAnnotator"/>
     </extensions>
