@@ -10,5 +10,11 @@ module.exports = {
     const { stdout, stderr } = await exec('./gradlew signPlugin');
     console.log(stdout);
     console.error(stderr);
+  },
+
+  publish: async () => {
+    const { stdout, stderr } = await exec('./gradlew publishPlugin');
+    console.log(stdout);
+    console.error(stderr);
   }
 };
