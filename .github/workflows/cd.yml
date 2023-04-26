@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install --global semantic-release@21 @semantic-release/git@10
+      - run: npm install --global semantic-release@21 @semantic-release/changelog@6 @semantic-release/git@10
       - run: npx semantic-release@21
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
