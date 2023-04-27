@@ -3,6 +3,12 @@ package me.benmelz.jetbrains.plugins.hamllint
 import com.intellij.codeInspection.ExternalAnnotatorInspectionVisitor
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.options.OptPane
+import com.intellij.codeInspection.options.OptPane.dropdown
+import com.intellij.codeInspection.options.OptPane.option
+import com.intellij.codeInspection.options.OptPane.pane
+import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiElementVisitor
 
 /**
@@ -13,7 +19,10 @@ import com.intellij.psi.PsiElementVisitor
  * @see LocalInspectionTool
  */
 class HamlLintInspection : LocalInspectionTool() {
-    /**
+    private var errorSeverityKey: String = HighlightSeverity.ERROR.name
+    private var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
+
+     /**
      * Delegates inspection logic to a [HamlLintExternalAnnotator].
      *
      * @param[holder] forwarded to an [ExternalAnnotatorInspectionVisitor].
@@ -30,4 +39,17 @@ class HamlLintInspection : LocalInspectionTool() {
      * @return false.
      */
     override fun showDefaultConfigurationOptions(): Boolean = false
+
+    override fun getOptionsPane(): OptPane {
+        val severityOptions = InspectionProfileManager
+            .getInstance()
+            .severityRegistrar
+            .allSeverities
+            .map { option(it.name, it.displayName) }
+            .toTypedArray()
+        return pane(
+            dropdown("errorSeverityKey", "Error:", *severityOptions),
+            dropdown("warningSeverityKey", "Warning:", *severityOptions),
+        )
+    }
 }
