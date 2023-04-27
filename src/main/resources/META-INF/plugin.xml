@@ -15,12 +15,15 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
     <p>
-      Provides realtime annotation of <code><a href="https://github.com/sds/haml-lint">haml-lint</a></code> offenses.
+      Provides realtime inspection of <code><a href="https://github.com/sds/haml-lint">haml-lint</a></code> offenses.
     </p>
     <p>
-      No configuration or setup is necessary from the IDE. As long as <code>haml-lint</code> is included in your
-      project's <code>Gemfile</code>, the plugin will automatically annotate <code>.haml</code> files for you while you
-      have them open.
+      No setup is necessary from the IDE. As long as <code>haml-lint</code> is included in your project's
+      <code>Gemfile</code>, the plugin will automatically annotate <code>.haml</code> files for you while you have
+      them open.
+    </p>
+    <p>
+      The inspector can be turned on/off using the inspections menu (Haml -> HamlLint).
     </p>
     ]]></description>
 
