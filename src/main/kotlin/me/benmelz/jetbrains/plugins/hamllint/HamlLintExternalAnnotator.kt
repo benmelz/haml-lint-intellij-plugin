@@ -6,7 +6,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
-import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiFile
 
 /**
@@ -22,7 +22,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
      */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
-        val inspectionProfile = ProjectInspectionProfileManager.getInstance(file.project).currentProfile
+        val inspectionProfile = InspectionProfileManager.getInstance(file.project).currentProfile
         val inspectionToolDisplayKey = inspectionProfile.getInspectionTool("HamlLint", file)?.displayKey
         if (!inspectionProfile.isToolEnabled(inspectionToolDisplayKey, file)) return null
         val fileText = file.viewProvider.document.charsSequence
