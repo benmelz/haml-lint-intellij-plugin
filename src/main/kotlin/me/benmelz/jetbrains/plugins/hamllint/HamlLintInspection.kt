@@ -19,8 +19,8 @@ import com.intellij.psi.PsiElementVisitor
  * @see LocalInspectionTool
  */
 class HamlLintInspection : LocalInspectionTool() {
-    private var errorSeverityKey: String = HighlightSeverity.ERROR.name
-    private var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
+    var errorSeverityKey: String = HighlightSeverity.ERROR.name
+    var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
 
      /**
      * Delegates inspection logic to a [HamlLintExternalAnnotator].

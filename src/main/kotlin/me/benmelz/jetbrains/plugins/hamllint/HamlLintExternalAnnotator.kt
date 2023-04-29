@@ -3,7 +3,7 @@ package me.benmelz.jetbrains.plugins.hamllint
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.editor.Document
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProfileManager
@@ -15,6 +15,9 @@ import com.intellij.psi.PsiFile
  * @see ExternalAnnotator
  */
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
+
+    private val logger = Logger.getInstance("HamlLint")
+
     /**
      * Collects `haml` code as a string as well as the path to the parent project of a file to lint.
      *
@@ -51,11 +54,13 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[holder] a holder for any annotations to display in the editor.
      */
     override fun apply(file: PsiFile, offenses: List<HamlLintOffense>?, holder: AnnotationHolder) {
+        val severities = InspectionProfileManager.getInstance().severityRegistrar.allSeverities
+        val severityMap = severities.associateBy { it.name }
         offenses?.forEach {
-            val severity = translateOffenseSeverity(it.severity)
+            val severity = translateOffenseSeverity(it.severity, file, severityMap)
             val message = translateOffenseLinterNameAndMessage(it.linterName, it.message)
-            val range = translateOffenseLineNumber(it.lineNumber, file.viewProvider.document)
-            if (range != null) holder.newAnnotation(severity, message).range(range).create()
+            val range = translateOffenseLineNumber(it.lineNumber, file)
+            if (severity != null && range != null) holder.newAnnotation(severity, message).range(range).create()
         }
     }
 
@@ -65,8 +70,21 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[severity] the `haml-lint` severity reported by an offense.
      * @return an equivalent [HighlightSeverity].
      */
-    private fun translateOffenseSeverity(severity: String): HighlightSeverity {
-        return if (severity == "error") HighlightSeverity.ERROR else HighlightSeverity.WEAK_WARNING
+    private fun translateOffenseSeverity(
+        severity: String,
+        file: PsiFile,
+        severityMap: Map<String, HighlightSeverity>,
+    ): HighlightSeverity? {
+        val inspectionTool = InspectionProfileManager
+            .getInstance(file.project)
+            .currentProfile
+            .getUnwrappedTool("HamlLint", file) as HamlLintInspection? ?: return null
+        val severityKey = if (severity == "error") {
+            inspectionTool.errorSeverityKey
+        } else {
+            inspectionTool.warningSeverityKey
+        }
+        return severityMap[severityKey]
     }
 
     /**
@@ -84,10 +102,11 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * Translates a line number of a `haml-lint` offense to a [TextRange] for highlighting.
      *
      * @param[lineNumber] the number of the line containing the offense.
-     * @param[document] the document of the file that was linted.
+     * @param[document] the file that was linted.
      * @return a text range for the exact characters to highlight.
      */
-    private fun translateOffenseLineNumber(lineNumber: Int, document: Document): TextRange? {
+    private fun translateOffenseLineNumber(lineNumber: Int, file: PsiFile): TextRange? {
+        val document = file.viewProvider.document
         val lineIndex = if (lineNumber <= 0) 0 else lineNumber - 1
         if (lineIndex >= document.lineCount) return null
         var startOffset = document.getLineStartOffset(lineIndex)
