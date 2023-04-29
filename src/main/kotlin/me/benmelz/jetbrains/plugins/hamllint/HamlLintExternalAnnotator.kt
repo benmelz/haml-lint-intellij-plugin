@@ -1,5 +1,6 @@
 package me.benmelz.jetbrains.plugins.hamllint
 
+import com.intellij.codeInspection.ex.Tools
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
@@ -21,9 +22,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
      */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
-        val inspectionProfile = InspectionProfileManager.getInstance(file.project).currentProfile
-        val inspectionToolDisplayKey = inspectionProfile.getInspectionTool("HamlLint", file)?.displayKey
-        if (!inspectionProfile.isToolEnabled(inspectionToolDisplayKey, file)) return null
+        if (!(inspectionTool(file).isEnabled)) return null
         val fileText = file.viewProvider.document.charsSequence
         val contentRoot = ProjectFileIndex
             .getInstance(file.project)
@@ -50,8 +49,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[holder] a holder for any annotations to display in the editor.
      */
     override fun apply(file: PsiFile, offenses: List<HamlLintOffense>?, holder: AnnotationHolder) {
-        val severities = InspectionProfileManager.getInstance().severityRegistrar.allSeverities
-        val severityMap = severities.associateBy { it.name }
+        val severityMap = buildHighlightSeverityMap()
         offenses?.forEach {
             val severity = translateOffenseSeverity(it.severity, file, severityMap)
             val message = translateOffenseLinterNameAndMessage(it.linterName, it.message)
@@ -71,10 +69,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         file: PsiFile,
         severityMap: Map<String, HighlightSeverity>,
     ): HighlightSeverity? {
-        val inspectionTool = InspectionProfileManager
-            .getInstance(file.project)
-            .currentProfile
-            .getUnwrappedTool("HamlLint", file) as HamlLintInspection? ?: return null
+        val inspectionTool = inspectionProfileEntry(file)
         val severityKey = if (severity == "error") {
             inspectionTool.errorSeverityKey
         } else {
@@ -111,5 +106,17 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         while (documentText[endOffset] == ' ' && startOffset < endOffset) endOffset--
         while (documentText[startOffset] == ' ' && startOffset < endOffset) startOffset++
         return TextRange(startOffset, endOffset)
+    }
+
+    private fun inspectionTool(file: PsiFile): Tools {
+        return InspectionProfileManager.getInstance(file.project).currentProfile.getTools("HamlLint", file.project)
+    }
+
+    private fun inspectionProfileEntry(file: PsiFile): HamlLintInspection {
+        return inspectionTool(file).getInspectionTool(file).tool as HamlLintInspection
+    }
+
+    private fun buildHighlightSeverityMap(): Map<String, HighlightSeverity> {
+        return InspectionProfileManager.getInstance().severityRegistrar.allSeverities.associateBy { it.name }
     }
 }
