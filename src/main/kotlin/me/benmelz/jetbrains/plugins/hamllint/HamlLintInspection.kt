@@ -4,7 +4,10 @@ import com.intellij.codeInspection.ExternalAnnotatorInspectionVisitor
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.options.OptPane
-import com.intellij.codeInspection.options.OptPane.*
+import com.intellij.codeInspection.options.OptPane.dropdown
+import com.intellij.codeInspection.options.OptPane.group
+import com.intellij.codeInspection.options.OptPane.option
+import com.intellij.codeInspection.options.OptPane.pane
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElementVisitor
 
@@ -44,12 +47,14 @@ class HamlLintInspection : LocalInspectionTool() {
                 HighlightSeverity.WARNING,
                 HighlightSeverity.WEAK_WARNING,
             ).map { option(it.name, it.displayCapitalizedName) }.toTypedArray(),
-            option("","No highlighting"),
+            option("", "No highlighting"),
         )
-        return pane(group(
-            "HamlLint Severities Mapping",
-            dropdown("errorSeverityKey", "Error: ", *severityOptions),
-            dropdown("warningSeverityKey", "Warning: ", *severityOptions),
-        ))
+        return pane(
+            group(
+                "HamlLint Severities Mapping",
+                dropdown("errorSeverityKey", "Error: ", *severityOptions),
+                dropdown("warningSeverityKey", "Warning: ", *severityOptions),
+            ),
+        )
     }
 }
