@@ -9,7 +9,18 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiFile
 
+/**
+ * An external annotator that runs `haml-lint` against open editor files and annotates them with any returned offenses.
+ *
+ * @see ExternalAnnotator
+ */
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
+    /**
+     * Collects `haml` code as a string as well as the path to the parent project of a file to lint.
+     *
+     * @param[file] the file to run `haml-lint` against.
+     * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
+     */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
         val inspectionProfile = ProjectInspectionProfileManager.getInstance(file.project).currentProfile
         val inspectionToolDisplayKey = inspectionProfile.getInspectionTool("HamlLint", file)?.displayKey
@@ -22,10 +33,23 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         return if (contentRoot == null) null else HamlLintExternalAnnotatorInfo(fileText, contentRoot)
     }
 
+    /**
+     * Externally runs `haml-lint` given haml code and a working directory.
+     *
+     * @param[collectedInfo] information for a file to run `haml-lint` against, `null` if annotation should be skipped.
+     * @return any offenses reported by `haml-lint`.
+     */
     override fun doAnnotate(collectedInfo: HamlLintExternalAnnotatorInfo?): List<HamlLintOffense>? {
         return if (collectedInfo == null) null else hamlLint(collectedInfo.fileText, collectedInfo.contentRoot)
     }
 
+    /**
+     * Annotates a file in the editor given a list of [HamlLintOffense]s reported by `haml-lint`.
+     *
+     * @param[file] the file that `haml-lint` offenses were collected for.
+     * @param[offenses] the offenses that were collected.
+     * @param[holder] a holder for any annotations to display in the editor.
+     */
     override fun apply(file: PsiFile, offenses: List<HamlLintOffense>?, holder: AnnotationHolder) {
         offenses?.forEach {
             val severity = translateOffenseSeverity(it.severity)
@@ -35,14 +59,34 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         }
     }
 
+    /**
+     * Translates a `haml-lint` severity to a [HighlightSeverity].
+     *
+     * @param[severity] the `haml-lint` severity reported by an offense.
+     * @return an equivalent [HighlightSeverity].
+     */
     private fun translateOffenseSeverity(severity: String): HighlightSeverity {
         return if (severity == "error") HighlightSeverity.ERROR else HighlightSeverity.WEAK_WARNING
     }
 
+    /**
+     * Combines and formats a linter name/message from a `haml-lint` offense for display.
+     *
+     * @param[linterName] the name of the linter that was offended.
+     * @param[message] the description of the offense.
+     * @return a formatted message to display for the offense.
+     */
     private fun translateOffenseLinterNameAndMessage(linterName: String, message: String): String {
         return "HamlLint: $message [$linterName]"
     }
 
+    /**
+     * Translates a line number of a `haml-lint` offense to a [TextRange] for highlighting.
+     *
+     * @param[lineNumber] the number of the line containing the offense.
+     * @param[document] the document of the file that was linted.
+     * @return a text range for the exact characters to highlight.
+     */
     private fun translateOffenseLineNumber(lineNumber: Int, document: Document): TextRange? {
         val lineIndex = if (lineNumber <= 0) 0 else lineNumber - 1
         if (lineIndex >= document.lineCount) return null
