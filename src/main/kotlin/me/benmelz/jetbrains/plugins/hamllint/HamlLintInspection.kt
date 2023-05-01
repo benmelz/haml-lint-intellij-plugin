@@ -6,9 +6,11 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 
 /**
- * A [LocalInspectionTool] that delegates to a [HamlLintExternalAnnotator].
+ * An inspection tool for `haml` that delegates to a [HamlLintExternalAnnotator].
  *
  * Also serves as the configuration hub for the entire plugin.
+ *
+ * @see LocalInspectionTool
  */
 class HamlLintInspection : LocalInspectionTool() {
     /**
@@ -16,7 +18,7 @@ class HamlLintInspection : LocalInspectionTool() {
      *
      * @param[holder] forwarded to an [ExternalAnnotatorInspectionVisitor].
      * @param[isOnTheFly] forwarded to an [ExternalAnnotatorInspectionVisitor].
-     * @return an [ExternalAnnotatorInspectionVisitor] tied to a [HamlLintExternalAnnotator]
+     * @return an [ExternalAnnotatorInspectionVisitor] tied to a [HamlLintExternalAnnotator].
      */
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return ExternalAnnotatorInspectionVisitor(holder, HamlLintExternalAnnotator(), isOnTheFly)
@@ -25,7 +27,7 @@ class HamlLintInspection : LocalInspectionTool() {
     /**
      * Hides the default inspection configuration options.
      *
-     * @return false
+     * @return false.
      */
     override fun showDefaultConfigurationOptions(): Boolean = false
 }
