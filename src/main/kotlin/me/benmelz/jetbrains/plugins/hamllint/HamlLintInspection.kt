@@ -19,7 +19,14 @@ import com.intellij.psi.PsiElementVisitor
  * @see LocalInspectionTool
  */
 class HamlLintInspection : LocalInspectionTool() {
+    /**
+     * The name of the highlight severity to use for `haml-lint` errors.
+     */
     var errorSeverityKey: String = HighlightSeverity.ERROR.name
+
+    /**
+     * The name of the highlight severity to use for `haml-lint` warnings.
+     */
     var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
 
      /**
@@ -40,6 +47,11 @@ class HamlLintInspection : LocalInspectionTool() {
      */
     override fun showDefaultConfigurationOptions(): Boolean = false
 
+    /**
+     * Builds the configuration pane for the inspection/plugin.
+     *
+     * @return a set of UI elements used to control the plugin and its settings.
+     */
     override fun getOptionsPane(): OptPane {
         val severityOptions = arrayOf(
             *arrayOf(

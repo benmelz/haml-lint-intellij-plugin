@@ -16,6 +16,9 @@ import com.intellij.psi.PsiFile
  * @see ExternalAnnotator
  */
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
+    /**
+     * The global logger instance for the plugin.
+     */
     private val logger = Logger.getInstance("HamlLint")
 
     /**
@@ -62,7 +65,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
     }
 
     /**
-     * Translates a `haml-lint` severity to a [HighlightSeverity].
+     * Translates a `haml-lint` severity to a [HighlightSeverity] based on the inspection configuring.
      *
      * @param[severity] the `haml-lint` severity reported by an offense.
      * @return an equivalent [HighlightSeverity].
@@ -114,14 +117,31 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         return TextRange(startOffset, endOffset)
     }
 
+    /**
+     * Retrieves the top-level wrapper of a file's project's [HamlLintInspection].
+     *
+     * @param[file] the file whose inspection tool wrapper to retrieve.
+     * @return the top-level wrapper for the inspection tool.
+     */
     private fun inspectionTool(file: PsiFile): Tools {
         return InspectionProfileManager.getInstance(file.project).currentProfile.getTools("HamlLint", file.project)
     }
 
+    /**
+     * Retrieves a file's project's [HamlLintInspection] instance.
+     *
+     * @param[file] the file inspection instance to retrieve.
+     * @return the [HamlLintInspection] instance of the given file.
+     */
     private fun inspectionProfileEntry(file: PsiFile): HamlLintInspection {
         return inspectionTool(file).getInspectionTool(file).tool as HamlLintInspection
     }
 
+    /**
+     * Builds a mapping of all highlight severities by name.
+     *
+     * @return a mapping of highlight severities by name.
+     */
     private fun buildHighlightSeverityMap(): Map<String, HighlightSeverity> {
         return InspectionProfileManager.getInstance().severityRegistrar.allSeverities.associateBy { it.name }
     }
