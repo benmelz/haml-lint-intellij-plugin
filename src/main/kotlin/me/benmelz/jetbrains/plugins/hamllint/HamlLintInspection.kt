@@ -8,7 +8,6 @@ import com.intellij.codeInspection.options.OptPane.dropdown
 import com.intellij.codeInspection.options.OptPane.option
 import com.intellij.codeInspection.options.OptPane.pane
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiElementVisitor
 
 /**
@@ -41,15 +40,17 @@ class HamlLintInspection : LocalInspectionTool() {
     override fun showDefaultConfigurationOptions(): Boolean = false
 
     override fun getOptionsPane(): OptPane {
-        val severityOptions = InspectionProfileManager
-            .getInstance()
-            .severityRegistrar
-            .allSeverities
-            .map { option(it.name, it.displayName) }
-            .toTypedArray()
+        val severityOptions = arrayOf(
+            *arrayOf(
+                HighlightSeverity.ERROR,
+                HighlightSeverity.WARNING,
+                HighlightSeverity.WEAK_WARNING,
+            ).map { option(it.name, it.displayCapitalizedName) }.toTypedArray(),
+            option("","No highlighting"),
+        )
         return pane(
-            dropdown("errorSeverityKey", "Error:", *severityOptions),
-            dropdown("warningSeverityKey", "Warning:", *severityOptions),
+            dropdown("errorSeverityKey", "Error: ", *severityOptions),
+            dropdown("warningSeverityKey", "Warning: ", *severityOptions),
         )
     }
 }
