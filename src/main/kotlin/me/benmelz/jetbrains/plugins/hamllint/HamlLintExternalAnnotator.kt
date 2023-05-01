@@ -1,12 +1,13 @@
 package me.benmelz.jetbrains.plugins.hamllint
 
+import com.intellij.codeInspection.ex.Tools
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.editor.Document
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
-import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiFile
 
 /**
@@ -16,15 +17,18 @@ import com.intellij.psi.PsiFile
  */
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
     /**
+     * The global logger instance for the plugin.
+     */
+    private val logger = Logger.getInstance("HamlLint")
+
+    /**
      * Collects `haml` code as a string as well as the path to the parent project of a file to lint.
      *
      * @param[file] the file to run `haml-lint` against.
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
      */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
-        val inspectionProfile = ProjectInspectionProfileManager.getInstance(file.project).currentProfile
-        val inspectionToolDisplayKey = inspectionProfile.getInspectionTool("HamlLint", file)?.displayKey
-        if (!inspectionProfile.isToolEnabled(inspectionToolDisplayKey, file)) return null
+        if (!(inspectionTool(file).isEnabled)) return null
         val fileText = file.viewProvider.document.charsSequence
         val contentRoot = ProjectFileIndex
             .getInstance(file.project)
@@ -51,22 +55,36 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[holder] a holder for any annotations to display in the editor.
      */
     override fun apply(file: PsiFile, offenses: List<HamlLintOffense>?, holder: AnnotationHolder) {
+        val severityMap = buildHighlightSeverityMap()
         offenses?.forEach {
-            val severity = translateOffenseSeverity(it.severity)
+            val severity = translateOffenseSeverity(it.severity, file, severityMap)
             val message = translateOffenseLinterNameAndMessage(it.linterName, it.message)
-            val range = translateOffenseLineNumber(it.lineNumber, file.viewProvider.document)
-            if (range != null) holder.newAnnotation(severity, message).range(range).create()
+            val range = translateOffenseLineNumber(it.lineNumber, file)
+            if (severity != null && range != null) holder.newAnnotation(severity, message).range(range).create()
         }
     }
 
     /**
-     * Translates a `haml-lint` severity to a [HighlightSeverity].
+     * Translates a `haml-lint` severity to a [HighlightSeverity] based on the inspection configuring.
      *
      * @param[severity] the `haml-lint` severity reported by an offense.
      * @return an equivalent [HighlightSeverity].
      */
-    private fun translateOffenseSeverity(severity: String): HighlightSeverity {
-        return if (severity == "error") HighlightSeverity.ERROR else HighlightSeverity.WEAK_WARNING
+    private fun translateOffenseSeverity(
+        severity: String,
+        file: PsiFile,
+        severityMap: Map<String, HighlightSeverity>,
+    ): HighlightSeverity? {
+        val inspectionTool = inspectionProfileEntry(file)
+        val severityKey = when (severity) {
+            "warning" -> inspectionTool.warningSeverityKey
+            "error" -> inspectionTool.errorSeverityKey
+            else -> {
+                logger.error("Unrecognized severity: $severity")
+                null
+            }
+        }
+        return severityMap[severityKey]
     }
 
     /**
@@ -84,10 +102,11 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * Translates a line number of a `haml-lint` offense to a [TextRange] for highlighting.
      *
      * @param[lineNumber] the number of the line containing the offense.
-     * @param[document] the document of the file that was linted.
+     * @param[document] the file that was linted.
      * @return a text range for the exact characters to highlight.
      */
-    private fun translateOffenseLineNumber(lineNumber: Int, document: Document): TextRange? {
+    private fun translateOffenseLineNumber(lineNumber: Int, file: PsiFile): TextRange? {
+        val document = file.viewProvider.document
         val lineIndex = if (lineNumber <= 0) 0 else lineNumber - 1
         if (lineIndex >= document.lineCount) return null
         var startOffset = document.getLineStartOffset(lineIndex)
@@ -96,5 +115,34 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         while (documentText[endOffset] == ' ' && startOffset < endOffset) endOffset--
         while (documentText[startOffset] == ' ' && startOffset < endOffset) startOffset++
         return TextRange(startOffset, endOffset)
+    }
+
+    /**
+     * Retrieves the top-level wrapper of a file's project's [HamlLintInspection].
+     *
+     * @param[file] the file whose inspection tool wrapper to retrieve.
+     * @return the top-level wrapper for the inspection tool.
+     */
+    private fun inspectionTool(file: PsiFile): Tools {
+        return InspectionProfileManager.getInstance(file.project).currentProfile.getTools("HamlLint", file.project)
+    }
+
+    /**
+     * Retrieves a file's project's [HamlLintInspection] instance.
+     *
+     * @param[file] the file inspection instance to retrieve.
+     * @return the [HamlLintInspection] instance of the given file.
+     */
+    private fun inspectionProfileEntry(file: PsiFile): HamlLintInspection {
+        return inspectionTool(file).getInspectionTool(file).tool as HamlLintInspection
+    }
+
+    /**
+     * Builds a mapping of all highlight severities by name.
+     *
+     * @return a mapping of highlight severities by name.
+     */
+    private fun buildHighlightSeverityMap(): Map<String, HighlightSeverity> {
+        return InspectionProfileManager.getInstance().severityRegistrar.allSeverities.associateBy { it.name }
     }
 }
