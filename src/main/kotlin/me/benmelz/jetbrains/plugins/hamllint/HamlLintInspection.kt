@@ -29,7 +29,7 @@ class HamlLintInspection : LocalInspectionTool() {
      */
     var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
 
-     /**
+    /**
      * Delegates inspection logic to a [HamlLintExternalAnnotator].
      *
      * @param[holder] forwarded to an [ExternalAnnotatorInspectionVisitor].
