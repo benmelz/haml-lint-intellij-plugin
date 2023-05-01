@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ex.Tools
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProfileManager
@@ -15,6 +16,8 @@ import com.intellij.psi.PsiFile
  * @see ExternalAnnotator
  */
 class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInfo, List<HamlLintOffense>>() {
+    private val logger = Logger.getInstance("HamlLint")
+
     /**
      * Collects `haml` code as a string as well as the path to the parent project of a file to lint.
      *
@@ -70,10 +73,13 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         severityMap: Map<String, HighlightSeverity>,
     ): HighlightSeverity? {
         val inspectionTool = inspectionProfileEntry(file)
-        val severityKey = if (severity == "error") {
-            inspectionTool.errorSeverityKey
-        } else {
-            inspectionTool.warningSeverityKey
+        val severityKey = when (severity) {
+            "warning" -> inspectionTool.warningSeverityKey
+            "error" -> inspectionTool.errorSeverityKey
+            else -> {
+                logger.error("Unrecognized severity: $severity")
+                null
+            }
         }
         return severityMap[severityKey]
     }
