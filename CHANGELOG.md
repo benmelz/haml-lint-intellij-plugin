@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.1.0...v1.2.0) (2023-05-01)
+
+
+### Features
+
+* ability to configure highlight severities ([#13](https://github.com/benmelz/haml-lint-intellij-plugin/issues/13)) ([da3d879](https://github.com/benmelz/haml-lint-intellij-plugin/commit/da3d879f4f118b3ea336808dd099f68853c421a8))
+
 # [1.1.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.0.0...v1.1.0) (2023-04-26)
 
 
