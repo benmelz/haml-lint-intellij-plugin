@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiFile
+import java.lang.IndexOutOfBoundsException
 
 /**
  * An external annotator that runs `haml-lint` against open editor files and annotates them with any returned offenses.
@@ -111,10 +112,14 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         if (lineIndex >= document.lineCount) return null
         var startOffset = document.getLineStartOffset(lineIndex)
         var endOffset = document.getLineEndOffset(lineIndex)
-        val documentText = document.charsSequence
-        while (documentText[endOffset] == ' ' && startOffset < endOffset) endOffset--
-        while (documentText[startOffset] == ' ' && startOffset < endOffset) startOffset++
-        return TextRange(startOffset, endOffset)
+        return try {
+            val documentText = document.charsSequence
+            while (documentText[endOffset] == ' ' && startOffset < endOffset) endOffset--
+            while (documentText[startOffset] == ' ' && startOffset < endOffset) startOffset++
+            TextRange(startOffset, endOffset)
+        } catch (e: IndexOutOfBoundsException) {
+            null
+        }
     }
 
     /**
