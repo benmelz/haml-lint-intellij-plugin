@@ -103,7 +103,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * Translates a line number of a `haml-lint` offense to a [TextRange] for highlighting.
      *
      * @param[lineNumber] the number of the line containing the offense.
-     * @param[document] the file that was linted.
+     * @param[file] the file that was linted.
      * @return a text range for the exact characters to highlight.
      */
     private fun translateOffenseLineNumber(lineNumber: Int, file: PsiFile): TextRange? {
