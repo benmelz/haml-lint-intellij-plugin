@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.0...v1.2.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* catch text range index exceptions ([#17](https://github.com/benmelz/haml-lint-intellij-plugin/issues/17)) ([29827e8](https://github.com/benmelz/haml-lint-intellij-plugin/commit/29827e87a77b43e9697a607d965abe9fa694d2a5))
+
 # [1.2.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.1.0...v1.2.0) (2023-05-01)
 
 
