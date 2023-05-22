@@ -15,6 +15,9 @@ repositories {
 dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     testImplementation(kotlin("test"))
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
 // Configure Gradle IntelliJ Plugin
