@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.8.20"
     id("org.jetbrains.kotlin.jvm") version "1.8.22"
     id("org.jetbrains.intellij") version "1.14.2"
-    id("org.jlleitschuh.gradle.ktlint") version "11.4.2"
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.0"
 }
 
 group = "me.benmelz"
