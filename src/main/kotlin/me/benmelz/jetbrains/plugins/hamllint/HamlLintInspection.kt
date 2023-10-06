@@ -36,7 +36,10 @@ class HamlLintInspection : LocalInspectionTool() {
      * @param[isOnTheFly] forwarded to an [ExternalAnnotatorInspectionVisitor].
      * @return an [ExternalAnnotatorInspectionVisitor] tied to a [HamlLintExternalAnnotator].
      */
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+    ): PsiElementVisitor {
         return ExternalAnnotatorInspectionVisitor(holder, HamlLintExternalAnnotator(), isOnTheFly)
     }
 
@@ -53,14 +56,15 @@ class HamlLintInspection : LocalInspectionTool() {
      * @return a set of UI elements used to control the plugin and its settings.
      */
     override fun getOptionsPane(): OptPane {
-        val severityOptions = arrayOf(
-            *arrayOf(
-                HighlightSeverity.ERROR,
-                HighlightSeverity.WARNING,
-                HighlightSeverity.WEAK_WARNING,
-            ).map { option(it.name, it.displayCapitalizedName) }.toTypedArray(),
-            option("", "No highlighting"),
-        )
+        val severityOptions =
+            arrayOf(
+                *arrayOf(
+                    HighlightSeverity.ERROR,
+                    HighlightSeverity.WARNING,
+                    HighlightSeverity.WEAK_WARNING,
+                ).map { option(it.name, it.displayCapitalizedName) }.toTypedArray(),
+                option("", "No highlighting"),
+            )
         return pane(
             group(
                 "HamlLint Severities Mapping",
