@@ -1,6 +1,7 @@
 package me.benmelz.jetbrains.plugins.hamllint
 
 import com.intellij.codeInspection.ex.Tools
+import com.intellij.execution.ExecutionException
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
@@ -45,7 +46,16 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @return any offenses reported by `haml-lint`.
      */
     override fun doAnnotate(collectedInfo: HamlLintExternalAnnotatorInfo?): List<HamlLintOffense>? {
-        return if (collectedInfo == null) null else hamlLint(collectedInfo.fileText, collectedInfo.contentRoot)
+        return if (collectedInfo == null) {
+            null
+        } else {
+            try {
+                hamlLint(collectedInfo.fileText, collectedInfo.contentRoot)
+            } catch (e: ExecutionException) {
+                logger.error(e.message)
+                null
+            }
+        }
     }
 
     /**
