@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.1...v1.2.2) (2023-10-06)
+
+
+### Bug Fixes
+
+* swallow execution exceptions and log them ([#44](https://github.com/benmelz/haml-lint-intellij-plugin/issues/44)) ([b0c56cc](https://github.com/benmelz/haml-lint-intellij-plugin/commit/b0c56ccd7b23c30d539d5a50031ce445942a9417)), closes [#43](https://github.com/benmelz/haml-lint-intellij-plugin/issues/43)
+
 ## [1.2.1](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.0...v1.2.1) (2023-05-20)
 
 
