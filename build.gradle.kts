@@ -30,7 +30,7 @@ intellij {
 }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    version.set("0.48.2")
+    version.set("1.0.0")
 }
 
 tasks {
