@@ -1,4 +1,0 @@
-[*.{kt,kts}]
-ktlint_code_style = ktlint_official
-max_line_length = 120
-

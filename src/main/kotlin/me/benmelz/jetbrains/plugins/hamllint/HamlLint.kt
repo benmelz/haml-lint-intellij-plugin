@@ -15,7 +15,10 @@ import java.util.LinkedList
  * @param[workDirectory] the work directory from which to run haml-lint.
  * @return a list of collected haml-lint offenses.
  */
-fun hamlLint(haml: CharSequence, workDirectory: Path): List<HamlLintOffense> {
+fun hamlLint(
+    haml: CharSequence,
+    workDirectory: Path,
+): List<HamlLintOffense> {
     HamlLintTarget.createTempTarget(haml).use {
         val cli = hamlLintCommandLine(it, workDirectory)
         return parseHamlLintOutput(ScriptRunnerUtil.getProcessOutput(cli))
@@ -30,7 +33,10 @@ fun hamlLint(haml: CharSequence, workDirectory: Path): List<HamlLintOffense> {
  * @param[workDirectory] the directory from which to run `haml-lint`.
  * @return an executable [GeneralCommandLine].
  */
-private fun hamlLintCommandLine(target: HamlLintTarget, workDirectory: Path): GeneralCommandLine {
+private fun hamlLintCommandLine(
+    target: HamlLintTarget,
+    workDirectory: Path,
+): GeneralCommandLine {
     return GeneralCommandLine("bundle").apply {
         this.addParameters("exec", "haml-lint", "--reporter", "json", target.absolutePath)
         this.charset = StandardCharsets.UTF_8

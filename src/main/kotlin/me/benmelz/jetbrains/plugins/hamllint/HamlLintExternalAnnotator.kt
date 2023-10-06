@@ -31,10 +31,8 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
         if (!(inspectionTool(file).isEnabled)) return null
         val fileText = file.viewProvider.document.charsSequence
-        val contentRoot = ProjectFileIndex
-            .getInstance(file.project)
-            .getContentRootForFile(file.virtualFile)
-            ?.toNioPath()
+        val contentRoot =
+            ProjectFileIndex.getInstance(file.project).getContentRootForFile(file.virtualFile)?.toNioPath()
         return if (contentRoot == null) null else HamlLintExternalAnnotatorInfo(fileText, contentRoot)
     }
 
@@ -55,7 +53,11 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[offenses] the offenses that were collected.
      * @param[holder] a holder for any annotations to display in the editor.
      */
-    override fun apply(file: PsiFile, offenses: List<HamlLintOffense>?, holder: AnnotationHolder) {
+    override fun apply(
+        file: PsiFile,
+        offenses: List<HamlLintOffense>?,
+        holder: AnnotationHolder,
+    ) {
         val severityMap = buildHighlightSeverityMap()
         offenses?.forEach {
             val severity = translateOffenseSeverity(it.severity, file, severityMap)
@@ -77,14 +79,15 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         severityMap: Map<String, HighlightSeverity>,
     ): HighlightSeverity? {
         val inspectionTool = inspectionProfileEntry(file)
-        val severityKey = when (severity) {
-            "warning" -> inspectionTool.warningSeverityKey
-            "error" -> inspectionTool.errorSeverityKey
-            else -> {
-                logger.error("Unrecognized severity: $severity")
-                null
+        val severityKey =
+            when (severity) {
+                "warning" -> inspectionTool.warningSeverityKey
+                "error" -> inspectionTool.errorSeverityKey
+                else -> {
+                    logger.error("Unrecognized severity: $severity")
+                    null
+                }
             }
-        }
         return severityMap[severityKey]
     }
 
@@ -95,7 +98,10 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[message] the description of the offense.
      * @return a formatted message to display for the offense.
      */
-    private fun translateOffenseLinterNameAndMessage(linterName: String, message: String): String {
+    private fun translateOffenseLinterNameAndMessage(
+        linterName: String,
+        message: String,
+    ): String {
         return "HamlLint: $message [$linterName]"
     }
 
@@ -106,7 +112,10 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[file] the file that was linted.
      * @return a text range for the exact characters to highlight.
      */
-    private fun translateOffenseLineNumber(lineNumber: Int, file: PsiFile): TextRange? {
+    private fun translateOffenseLineNumber(
+        lineNumber: Int,
+        file: PsiFile,
+    ): TextRange? {
         val document = file.viewProvider.document
         val lineIndex = if (lineNumber <= 0) 0 else lineNumber - 1
         if (lineIndex >= document.lineCount) return null
