@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.2...v1.3.0) (2023-10-23)
+
+
+### Features
+
+* custom execution commands ([#52](https://github.com/benmelz/haml-lint-intellij-plugin/issues/52)) ([c2d5cfb](https://github.com/benmelz/haml-lint-intellij-plugin/commit/c2d5cfb5059fab5ce49bfd20e80588626233c302)), closes [#50](https://github.com/benmelz/haml-lint-intellij-plugin/issues/50)
+
 ## [1.2.2](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.1...v1.2.2) (2023-10-06)
 
 
