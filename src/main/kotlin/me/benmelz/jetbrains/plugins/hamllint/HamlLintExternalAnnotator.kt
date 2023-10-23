@@ -1,6 +1,5 @@
 package me.benmelz.jetbrains.plugins.hamllint
 
-import com.intellij.codeInspection.ex.Tools
 import com.intellij.execution.ExecutionException
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
@@ -10,7 +9,6 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiFile
-import java.lang.IndexOutOfBoundsException
 
 /**
  * An external annotator that runs `haml-lint` against open editor files and annotates them with any returned offenses.
@@ -30,7 +28,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
      */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
-        if (!(inspectionTool(file).isEnabled)) return null
+        if (!(getConfiguration(file).enabled)) return null
         val fileText = file.viewProvider.document.charsSequence
         val contentRoot =
             ProjectFileIndex.getInstance(file.project).getContentRootForFile(file.virtualFile)?.toNioPath()
@@ -78,6 +76,25 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
     }
 
     /**
+     * Given a file, retrieves plugin configuration from its project's [HamlLintInspection] profile entry, throwing
+     * an [AssertionError] if the entry cannot be located.
+     *
+     * @param[file] the file for which to retrieve configuration for.
+     * @return a configuration object.
+     */
+    private fun getConfiguration(file: PsiFile): HamlLintConfiguration {
+        val inspectionTool =
+            InspectionProfileManager.getInstance(file.project).currentProfile.getToolsOrNull("HamlLint", file.project)
+                ?: throw AssertionError("Can't find haml-lint inspection tool")
+        val inspectionProfileEntry = inspectionTool.getInspectionTool(file).tool as HamlLintInspection
+        return HamlLintConfiguration(
+            inspectionTool.isEnabled,
+            inspectionProfileEntry.errorSeverityKey,
+            inspectionProfileEntry.warningSeverityKey,
+        )
+    }
+
+    /**
      * Translates a `haml-lint` severity to a [HighlightSeverity] based on the inspection configuring.
      *
      * @param[severity] the `haml-lint` severity reported by an offense.
@@ -88,11 +105,11 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         file: PsiFile,
         severityMap: Map<String, HighlightSeverity>,
     ): HighlightSeverity? {
-        val inspectionTool = inspectionProfileEntry(file)
+        val configuration = getConfiguration(file)
         val severityKey =
             when (severity) {
-                "warning" -> inspectionTool.warningSeverityKey
-                "error" -> inspectionTool.errorSeverityKey
+                "warning" -> configuration.warningSeverityKey
+                "error" -> configuration.errorSeverityKey
                 else -> {
                     logger.error("Unrecognized severity: $severity")
                     null
@@ -139,26 +156,6 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         } catch (e: IndexOutOfBoundsException) {
             null
         }
-    }
-
-    /**
-     * Retrieves the top-level wrapper of a file's project's [HamlLintInspection].
-     *
-     * @param[file] the file whose inspection tool wrapper to retrieve.
-     * @return the top-level wrapper for the inspection tool.
-     */
-    private fun inspectionTool(file: PsiFile): Tools {
-        return InspectionProfileManager.getInstance(file.project).currentProfile.getTools("HamlLint", file.project)
-    }
-
-    /**
-     * Retrieves a file's project's [HamlLintInspection] instance.
-     *
-     * @param[file] the file inspection instance to retrieve.
-     * @return the [HamlLintInspection] instance of the given file.
-     */
-    private fun inspectionProfileEntry(file: PsiFile): HamlLintInspection {
-        return inspectionTool(file).getInspectionTool(file).tool as HamlLintInspection
     }
 
     /**
