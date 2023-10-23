@@ -91,6 +91,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             inspectionTool.isEnabled,
             inspectionProfileEntry.errorSeverityKey,
             inspectionProfileEntry.warningSeverityKey,
+            inspectionProfileEntry.executionCommand,
         )
     }
 

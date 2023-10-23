@@ -8,6 +8,8 @@ import com.intellij.codeInspection.options.OptPane.dropdown
 import com.intellij.codeInspection.options.OptPane.group
 import com.intellij.codeInspection.options.OptPane.option
 import com.intellij.codeInspection.options.OptPane.pane
+import com.intellij.codeInspection.options.OptPane.separator
+import com.intellij.codeInspection.options.OptPane.string
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElementVisitor
 
@@ -28,6 +30,11 @@ class HamlLintInspection : LocalInspectionTool() {
      * The name of the highlight severity to use for `haml-lint` warnings.
      */
     var warningSeverityKey: String = HighlightSeverity.WEAK_WARNING.name
+
+    /**
+     * The execution command with which to run `haml-lint`.
+     */
+    var executionCommand: String = "bundle exec haml-lint"
 
     /**
      * Delegates inspection logic to a [HamlLintExternalAnnotator].
@@ -67,10 +74,15 @@ class HamlLintInspection : LocalInspectionTool() {
             )
         return pane(
             group(
-                "HamlLint Severities Mapping",
+                "Severities Mapping",
                 dropdown("errorSeverityKey", "Error: ", *severityOptions),
                 dropdown("warningSeverityKey", "Warning: ", *severityOptions),
             ),
+            separator(),
+            group(
+                "Execution Command",
+                string("executionCommand", "", 32)
+            )
         )
     }
 }
