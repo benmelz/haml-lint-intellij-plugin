@@ -81,8 +81,8 @@ class HamlLintInspection : LocalInspectionTool() {
             separator(),
             group(
                 "Execution Command",
-                string("executionCommand", "", 32)
-            )
+                string("executionCommand", "", 32),
+            ),
         )
     }
 }

@@ -13,14 +13,16 @@ import java.util.LinkedList
  *
  * @param[haml] the raw haml text to run against.
  * @param[workDirectory] the work directory from which to run haml-lint.
+ * @param[executionCommand] the execution command with which to run haml-lint.
  * @return a list of collected haml-lint offenses.
  */
 fun hamlLint(
     haml: CharSequence,
     workDirectory: Path,
+    executionCommand: List<String>,
 ): List<HamlLintOffense> {
     HamlLintTarget.createTempTarget(haml).use {
-        val cli = hamlLintCommandLine(it, workDirectory)
+        val cli = hamlLintCommandLine(it, workDirectory, executionCommand)
         return parseHamlLintOutput(ScriptRunnerUtil.getProcessOutput(cli))
     }
 }
@@ -31,14 +33,16 @@ fun hamlLint(
  *
  * @param[target] the [HamlLintTarget] to run against.
  * @param[workDirectory] the directory from which to run `haml-lint`.
+ * @param[executionCommand] the execution command with which to run haml-lint.
  * @return an executable [GeneralCommandLine].
  */
 private fun hamlLintCommandLine(
     target: HamlLintTarget,
     workDirectory: Path,
+    executionCommand: List<String>,
 ): GeneralCommandLine {
-    return GeneralCommandLine("bundle").apply {
-        this.addParameters("exec", "haml-lint", "--reporter", "json", target.absolutePath)
+    return GeneralCommandLine(executionCommand).apply {
+        this.addParameters("--reporter", "json", target.absolutePath)
         this.charset = StandardCharsets.UTF_8
         this.workDirectory = File(workDirectory.toUri())
         val rubocopConfigPath = workDirectory.resolve(".rubocop.yml").toAbsolutePath().toString()
