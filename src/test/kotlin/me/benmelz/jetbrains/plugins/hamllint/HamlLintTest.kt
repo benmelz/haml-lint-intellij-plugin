@@ -16,7 +16,7 @@ internal class HamlLintTest {
                 ScriptRunnerUtil.getProcessOutput(any())
             }.thenReturn(hamlLintOutputJson)
 
-            val offenses = hamlLint("test haml", Path.of("/"))
+            val offenses = hamlLint("test haml", Path.of("/"), listOf("bundle", "exec", "haml-lint"))
             assertEquals(offenses.size, 3)
             assertEquals(offenses[0], HamlLintOffense(0, "warning", "TestOffense0", "test offense 0"))
             assertEquals(offenses[1], HamlLintOffense(1, "warning", "TestOffense1", "test offense 1"))

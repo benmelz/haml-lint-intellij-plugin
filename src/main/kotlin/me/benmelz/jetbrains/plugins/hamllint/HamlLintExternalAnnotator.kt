@@ -28,11 +28,19 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
      */
     override fun collectInformation(file: PsiFile): HamlLintExternalAnnotatorInfo? {
-        if (!(getConfiguration(file).enabled)) return null
+        val configuration = getConfiguration(file)
+        if (!(configuration.enabled)) return null
+
         val fileText = file.viewProvider.document.charsSequence
+
         val contentRoot =
             ProjectFileIndex.getInstance(file.project).getContentRootForFile(file.virtualFile)?.toNioPath()
-        return if (contentRoot == null) null else HamlLintExternalAnnotatorInfo(fileText, contentRoot)
+        if (contentRoot == null) return null
+
+        val executionCommand = configuration.executionCommand.split(" ").filter { it.isNotEmpty() }
+        if (executionCommand.isEmpty()) return null
+
+        return HamlLintExternalAnnotatorInfo(fileText, contentRoot, executionCommand)
     }
 
     /**
@@ -46,7 +54,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             null
         } else {
             try {
-                hamlLint(collectedInfo.fileText, collectedInfo.contentRoot)
+                hamlLint(collectedInfo.fileText, collectedInfo.contentRoot, collectedInfo.executionCommand)
             } catch (e: ExecutionException) {
                 logger.error(e.message)
                 null
@@ -91,6 +99,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             inspectionTool.isEnabled,
             inspectionProfileEntry.errorSeverityKey,
             inspectionProfileEntry.warningSeverityKey,
+            inspectionProfileEntry.executionCommand,
         )
     }
 
