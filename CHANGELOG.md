@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.3.0...v1.3.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* expand compatibility range ([#60](https://github.com/benmelz/haml-lint-intellij-plugin/issues/60)) ([e54227b](https://github.com/benmelz/haml-lint-intellij-plugin/commit/e54227b6abbf19909eea8f58e12601050f3f50ca))
+
 # [1.3.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.2.2...v1.3.0) (2023-10-23)
 
 
