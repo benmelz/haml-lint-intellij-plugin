@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("org.jetbrains.dokka") version "1.9.20"
     id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.intellij") version "1.17.3"
+    id("org.jetbrains.intellij") version "1.17.4"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
