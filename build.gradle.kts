@@ -23,10 +23,10 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2024.1")
+    version.set("2024.2")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(listOf("org.jetbrains.plugins.haml:241.14494.150"))
+    plugins.set(listOf("org.jetbrains.plugins.haml:242.20224.175"))
 }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
@@ -49,7 +49,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231")
-        untilBuild.set("241.*")
+        untilBuild.set("242.*")
     }
 
     signPlugin {
