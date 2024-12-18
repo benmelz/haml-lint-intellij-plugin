@@ -46,9 +46,7 @@ class HamlLintInspection : LocalInspectionTool() {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
-    ): PsiElementVisitor {
-        return ExternalAnnotatorInspectionVisitor(holder, HamlLintExternalAnnotator(), isOnTheFly)
-    }
+    ): PsiElementVisitor = ExternalAnnotatorInspectionVisitor(holder, HamlLintExternalAnnotator(), isOnTheFly)
 
     /**
      * Hides the default inspection configuration options.

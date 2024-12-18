@@ -9,7 +9,10 @@ import java.net.URI
 /**
  * A file containing `haml` code that is deleted once closed.
  */
-class HamlLintTarget(uri: URI) : File(uri), AutoCloseable {
+class HamlLintTarget(
+    uri: URI,
+) : File(uri),
+    AutoCloseable {
     /**
      * Deletes this target.
      */
