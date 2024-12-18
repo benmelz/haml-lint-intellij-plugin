@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.dokka") version "2.0.0"
     id("org.jetbrains.kotlin.jvm") version "2.1.0"
     id("org.jetbrains.intellij") version "1.17.4"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
 }
 
 group = "me.benmelz"
@@ -30,7 +30,7 @@ intellij {
 }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    version.set("1.2.1")
+    version.set("1.5.0")
 }
 
 tasks {

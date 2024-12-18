@@ -49,8 +49,8 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      * @param[collectedInfo] information for a file to run `haml-lint` against, `null` if annotation should be skipped.
      * @return any offenses reported by `haml-lint`.
      */
-    override fun doAnnotate(collectedInfo: HamlLintExternalAnnotatorInfo?): List<HamlLintOffense>? {
-        return if (collectedInfo == null) {
+    override fun doAnnotate(collectedInfo: HamlLintExternalAnnotatorInfo?): List<HamlLintOffense>? =
+        if (collectedInfo == null) {
             null
         } else {
             try {
@@ -60,7 +60,6 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
                 null
             }
         }
-    }
 
     /**
      * Annotates a file in the editor given a list of [HamlLintOffense]s reported by `haml-lint`.
@@ -137,9 +136,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
     private fun translateOffenseLinterNameAndMessage(
         linterName: String,
         message: String,
-    ): String {
-        return "HamlLint: $message [$linterName]"
-    }
+    ): String = "HamlLint: $message [$linterName]"
 
     /**
      * Translates a line number of a `haml-lint` offense to a [TextRange] for highlighting.
@@ -172,7 +169,10 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
      *
      * @return a mapping of highlight severities by name.
      */
-    private fun buildHighlightSeverityMap(): Map<String, HighlightSeverity> {
-        return InspectionProfileManager.getInstance().severityRegistrar.allSeverities.associateBy { it.name }
-    }
+    private fun buildHighlightSeverityMap(): Map<String, HighlightSeverity> =
+        InspectionProfileManager
+            .getInstance()
+            .severityRegistrar
+            .allSeverities
+            .associateBy { it.name }
 }

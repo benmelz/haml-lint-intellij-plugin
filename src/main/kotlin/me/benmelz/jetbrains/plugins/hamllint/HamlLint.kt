@@ -40,15 +40,14 @@ private fun hamlLintCommandLine(
     target: HamlLintTarget,
     workDirectory: Path,
     executionCommand: List<String>,
-): GeneralCommandLine {
-    return GeneralCommandLine(executionCommand).apply {
+): GeneralCommandLine =
+    GeneralCommandLine(executionCommand).apply {
         this.addParameters("--reporter", "json", target.absolutePath)
         this.charset = StandardCharsets.UTF_8
         this.workDirectory = File(workDirectory.toUri())
         val rubocopConfigPath = workDirectory.resolve(".rubocop.yml").toAbsolutePath().toString()
         if (File(rubocopConfigPath).exists()) this.withEnvironment("HAML_LINT_RUBOCOP_CONF", rubocopConfigPath)
     }
-}
 
 /**
  * Parses the output of a `haml-lint` run using the `json` reporter as [HamlLintOffense]s.

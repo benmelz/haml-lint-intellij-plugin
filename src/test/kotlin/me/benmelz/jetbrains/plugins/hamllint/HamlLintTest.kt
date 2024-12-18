@@ -10,11 +10,16 @@ import kotlin.test.assertEquals
 internal class HamlLintTest {
     @Test
     fun testHamlLint() {
-        val hamlLintOutputJson = HamlLintTest::class.java.classLoader.getResource("haml_lint_output.json")!!.readText()
+        val hamlLintOutputJson =
+            HamlLintTest::class.java
+                .classLoader
+                .getResource("haml_lint_output.json")!!
+                .readText()
         mockStatic(ScriptRunnerUtil::class.java).use { mockedScriptRunnerUtil ->
-            mockedScriptRunnerUtil.`when`<Any> {
-                ScriptRunnerUtil.getProcessOutput(any())
-            }.thenReturn(hamlLintOutputJson)
+            mockedScriptRunnerUtil
+                .`when`<Any> {
+                    ScriptRunnerUtil.getProcessOutput(any())
+                }.thenReturn(hamlLintOutputJson)
 
             val offenses = hamlLint("test haml", Path.of("/"), listOf("bundle", "exec", "haml-lint"))
             assertEquals(offenses.size, 3)
