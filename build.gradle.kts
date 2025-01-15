@@ -2,6 +2,8 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 plugins {
     id("java") // Java support
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
@@ -33,6 +35,7 @@ dependencies {
     implementation(libs.gson)
     testImplementation(kotlin("test"))
     testImplementation(libs.mockitoCore)
+    mockitoAgent(libs.mockitoCore) { isTransitive = false }
     testImplementation(libs.mockitoInline)
     testImplementation(libs.mockitoKotlin)
 
@@ -129,7 +132,7 @@ kover {
         }
     }
 }
-*/
+ */
 
 tasks {
     wrapper {
@@ -140,7 +143,11 @@ tasks {
     publishPlugin {
         dependsOn(patchChangelog)
     }
-    */
+     */
+
+    test {
+        jvmArgs("-javaagent:${mockitoAgent.asPath}")
+    }
 }
 
 intellijPlatformTesting {
