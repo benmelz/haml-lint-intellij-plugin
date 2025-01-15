@@ -7,7 +7,7 @@ import com.intellij.execution.process.ScriptRunnerUtil
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.*
+import java.util.LinkedList
 
 /**
  * Executes haml-lint externally using the command line and parses its output.
@@ -30,7 +30,7 @@ fun hamlLint(
     haml.chars().forEach { stdin.write(it) }
     stdin.close()
     return parseHamlLintOutput(
-        ScriptRunnerUtil.getProcessOutput(processHandler, ScriptRunnerUtil.STDOUT_OUTPUT_KEY_FILTER, 30000L)
+        ScriptRunnerUtil.getProcessOutput(processHandler, ScriptRunnerUtil.STDOUT_OUTPUT_KEY_FILTER, 30000L),
     )
 }
 
