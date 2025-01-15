@@ -1,9 +1,9 @@
 plugins {
     id("java")
-    id("org.jetbrains.dokka") version "2.0.0"
-    id("org.jetbrains.kotlin.jvm") version "2.1.0"
-    id("org.jetbrains.intellij") version "1.17.4"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.intellij)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.ktlint)
 }
 
 group = "me.benmelz"
@@ -13,11 +13,11 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.gson)
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito:mockito-core:5.15.2")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoInline)
+    testImplementation(libs.mockitoKotlin)
 }
 
 // Configure Gradle IntelliJ Plugin
