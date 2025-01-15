@@ -27,7 +27,7 @@ fun hamlLint(
     val cli = hamlLintCommandLine(filePath, workDirectory, executionCommand)
     val processHandler = OSProcessHandler(cli)
     val stdin = processHandler.processInput
-    haml.chars().forEach { stdin.write(it) }
+    haml.forEach { stdin.write(it.code) }
     stdin.close()
     return parseHamlLintOutput(
         ScriptRunnerUtil.getProcessOutput(processHandler, ScriptRunnerUtil.STDOUT_OUTPUT_KEY_FILTER, 30000L),
