@@ -6,8 +6,8 @@ mockitoInline = "5.2.0"
 mockitoKotlin = "5.4.0"
 
 # plugins
-dokka = "2.0.0"
-intellij = "1.17.4"
+changelog = "2.2.1"
+intellijPlatform = "2.2.1"
 kotlin = "2.1.0"
 ktlint = "12.1.2"
 
@@ -18,7 +18,7 @@ mockitoInline = { group = "org.mockito", name = "mockito-inline", version.ref = 
 mockitoKotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 
 [plugins]
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-intellij = { id = "org.jetbrains.intellij", version.ref = "intellij" }
+changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
+intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

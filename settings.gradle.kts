@@ -1,1 +1,5 @@
-rootProject.name = "haml-lint-intellij-plugin"
+rootProject.name = "HamlLint"
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}

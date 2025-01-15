@@ -1,6 +1,8 @@
 # haml-lint-intellij-plugin
 
-[`haml-lint`](https://github.com/sds/haml-lint) annotations for [Jetbrains IDEs](https://www.jetbrains.com).
+<!-- Plugin description -->
+Annotates [haml-lint][haml-lint] offenses in real time while editing haml files.
+<!-- Plugin description end -->
 
 ## Installation & Usage
 
@@ -28,3 +30,5 @@ to enforce code style and `semantic-release` is used to release packages/publish
 ## License
 
 This plugin available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+[haml-lint]: https://github.com/sds/haml-lint
