@@ -19,6 +19,6 @@ mockitoKotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-intellij = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
+intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
