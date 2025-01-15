@@ -22,4 +22,4 @@ jobs:
         with:
           distribution: adopt
           java-version: 21
-      - run: ./gradlew test
+      - run: ./gradlew test --scan
