@@ -1,46 +1,18 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>me.benmelz.jetbrains.plugins.hamllint</id>
+    <id>org.jetbrains.plugins.template</id>
+    <name>IntelliJ Platform Plugin Template</name>
+    <vendor>JetBrains</vendor>
 
-    <!-- Public plugin name should be written in Title Case.
-         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>HamlLint</name>
-
-    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="ben@melz.me">benmelz</vendor>
-
-    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
-         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
-         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description><![CDATA[
-    <p>
-        Provides realtime inspection of <code><a href="https://github.com/sds/haml-lint">haml-lint</a></code> offenses.
-    </p>
-    <p>
-        The plugin will automatically attempt to annotate <code>.haml</code> files for you while you have them open.
-    </p>
-    <p>
-        Configuration options can be set in the inspections menu (<code>Haml</code> -> <code>HamlLint</code>). From
-        there the inspector can be turned on/off, highlighting styles can be set, as well as custom execution commands
-        for projects that needs it (e.g. you are not using bundler, are using docker, etc).
-    </p>
-    ]]></description>
-
-    <!-- Product and plugin compatibility requirements.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>org.jetbrains.plugins.haml</depends>
 
-    <!-- Extension points defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <resource-bundle>messages.MyBundle</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
-        <localInspection language="Haml"
-                         implementationClass="me.benmelz.jetbrains.plugins.hamllint.HamlLintInspection"
-                         groupName="Haml"
-                         displayName="HamlLint"
-                         enabledByDefault="true" />
-        <externalAnnotator language="Haml"
-                           implementationClass="me.benmelz.jetbrains.plugins.hamllint.HamlLintExternalAnnotator"/>
+        <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
     </extensions>
+
+    <applicationListeners>
+        <listener class="org.jetbrains.plugins.template.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+    </applicationListeners>
 </idea-plugin>
