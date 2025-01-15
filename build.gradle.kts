@@ -34,10 +34,6 @@ repositories {
 dependencies {
     implementation(libs.gson)
     testImplementation(kotlin("test"))
-    testImplementation(libs.mockitoCore)
-    mockitoAgent(libs.mockitoCore) { isTransitive = false }
-    testImplementation(libs.mockitoInline)
-    testImplementation(libs.mockitoKotlin)
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
@@ -144,10 +140,6 @@ tasks {
         dependsOn(patchChangelog)
     }
      */
-
-    test {
-        jvmArgs("-javaagent:${mockitoAgent.asPath}")
-    }
 }
 
 intellijPlatformTesting {
