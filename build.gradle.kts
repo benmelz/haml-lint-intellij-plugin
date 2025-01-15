@@ -5,10 +5,10 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 val mockitoAgent = configurations.create("mockitoAgent")
 
 plugins {
-    id("java") // Java support
-    alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.intellijPlatform) // IntelliJ Platform Gradle Plugin
-    alias(libs.plugins.kotlin) // Kotlin support
+    id("java")
+    alias(libs.plugins.changelog)
+    alias(libs.plugins.intellijPlatform)
+    alias(libs.plugins.kotlin)
     alias(libs.plugins.ktlint)
 }
 
