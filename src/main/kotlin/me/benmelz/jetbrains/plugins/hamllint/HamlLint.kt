@@ -2,11 +2,12 @@ package me.benmelz.jetbrains.plugins.hamllint
 
 import com.google.gson.JsonParser
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ScriptRunnerUtil
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.LinkedList
+import java.util.*
 
 /**
  * Executes haml-lint externally using the command line and parses its output.
@@ -18,13 +19,16 @@ import java.util.LinkedList
  */
 fun hamlLint(
     haml: CharSequence,
+    filePath: Path,
     workDirectory: Path,
     executionCommand: List<String>,
 ): List<HamlLintOffense> {
-    HamlLintTarget.createTempTarget(haml).use {
-        val cli = hamlLintCommandLine(it, workDirectory, executionCommand)
-        return parseHamlLintOutput(ScriptRunnerUtil.getProcessOutput(cli))
-    }
+    val cli = hamlLintCommandLine(filePath, workDirectory, executionCommand)
+    val processHandler = OSProcessHandler(cli)
+    val stdin = processHandler.processInput
+    haml.chars().forEach { stdin.write(it) }
+    stdin.close()
+    return parseHamlLintOutput(ScriptRunnerUtil.getProcessOutput(processHandler, ScriptRunnerUtil.STDOUT_OUTPUT_KEY_FILTER, 30000L))
 }
 
 /**
@@ -37,16 +41,14 @@ fun hamlLint(
  * @return an executable [GeneralCommandLine].
  */
 private fun hamlLintCommandLine(
-    target: HamlLintTarget,
+    filePath: Path,
     workDirectory: Path,
     executionCommand: List<String>,
 ): GeneralCommandLine =
     GeneralCommandLine(executionCommand).apply {
-        this.addParameters("--reporter", "json", target.absolutePath)
+        this.addParameters("--stdin", filePath.toString(), "--reporter", "json", )
         this.charset = StandardCharsets.UTF_8
         this.workDirectory = File(workDirectory.toUri())
-        val rubocopConfigPath = workDirectory.resolve(".rubocop.yml").toAbsolutePath().toString()
-        if (File(rubocopConfigPath).exists()) this.withEnvironment("HAML_LINT_RUBOCOP_CONF", rubocopConfigPath)
     }
 
 /**

@@ -11,6 +11,7 @@ import java.nio.file.Path
  */
 data class HamlLintExternalAnnotatorInfo(
     val fileText: CharSequence,
+    val filePath: Path,
     val contentRoot: Path,
     val executionCommand: List<String>,
 )
