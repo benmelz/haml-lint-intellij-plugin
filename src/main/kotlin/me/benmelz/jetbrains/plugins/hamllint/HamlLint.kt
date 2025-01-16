@@ -7,9 +7,9 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.ProjectLocator
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.LocalFileSystem
+import org.jetbrains.plugins.ruby.gem.RubyGemExecutionContext
 import java.nio.file.Path
 import java.util.LinkedList
-import org.jetbrains.plugins.ruby.gem.RubyGemExecutionContext
 
 /**
  * Executes haml-lint externally using the command line and parses its output.

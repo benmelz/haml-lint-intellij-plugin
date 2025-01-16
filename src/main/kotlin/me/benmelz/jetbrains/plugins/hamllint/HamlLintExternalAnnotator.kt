@@ -39,10 +39,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             ProjectFileIndex.getInstance(file.project).getContentRootForFile(file.virtualFile)?.toNioPath()
                 ?: return null
 
-        val executionCommand = configuration.executionCommand.split(" ").filter { it.isNotEmpty() }
-        if (executionCommand.isEmpty()) return null
-
-        return HamlLintExternalAnnotatorInfo(fileText, filePath, contentRoot, executionCommand)
+        return HamlLintExternalAnnotatorInfo(fileText, filePath, contentRoot)
     }
 
     /**
@@ -104,7 +101,6 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             inspectionTool.isEnabled,
             inspectionProfileEntry.errorSeverityKey,
             inspectionProfileEntry.warningSeverityKey,
-            inspectionProfileEntry.executionCommand,
         )
     }
 

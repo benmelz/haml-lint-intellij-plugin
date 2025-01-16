@@ -8,11 +8,9 @@ import java.nio.file.Path
  * @property[fileText] raw `haml` code to lint.
  * @property[filePath] path to the file that is to be linted.
  * @property[contentRoot] directory of the parent project of the code to be linted.
- * @param[executionCommand] execution command with which to run haml-lint.
  */
 data class HamlLintExternalAnnotatorInfo(
     val fileText: CharSequence,
     val filePath: Path,
     val contentRoot: Path,
-    val executionCommand: List<String>,
 )
