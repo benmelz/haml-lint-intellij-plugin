@@ -1,9 +1,6 @@
 [versions]
 # libraries
 gson= "2.11.0"
-mockitoCore = "5.15.2"
-mockitoInline = "5.2.0"
-mockitoKotlin = "5.4.0"
 
 # plugins
 changelog = "2.2.1"
@@ -13,9 +10,6 @@ ktlint = "12.1.2"
 
 [libraries]
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-mockitoCore = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
-mockitoInline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockitoInline" }
-mockitoKotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }

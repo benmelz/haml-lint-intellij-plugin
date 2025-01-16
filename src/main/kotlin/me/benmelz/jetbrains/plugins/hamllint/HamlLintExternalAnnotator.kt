@@ -22,7 +22,8 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
     private val logger = Logger.getInstance("HamlLint")
 
     /**
-     * Collects `haml` code as a string as well as the path to the parent project of a file to lint.
+     * Collects `haml` code as a string, the current file path, the root path of the parent project and the configured
+     * execution command.
      *
      * @param[file] the file to run `haml-lint` against.
      * @return the necessary information to run `haml-lint` against a file, `null` if the file should be skipped.
@@ -32,15 +33,16 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         if (!(configuration.enabled)) return null
 
         val fileText = file.viewProvider.document.charsSequence
+        val filePath = file.virtualFile.toNioPath()
 
         val contentRoot =
             ProjectFileIndex.getInstance(file.project).getContentRootForFile(file.virtualFile)?.toNioPath()
-        if (contentRoot == null) return null
+                ?: return null
 
         val executionCommand = configuration.executionCommand.split(" ").filter { it.isNotEmpty() }
         if (executionCommand.isEmpty()) return null
 
-        return HamlLintExternalAnnotatorInfo(fileText, contentRoot, executionCommand)
+        return HamlLintExternalAnnotatorInfo(fileText, filePath, contentRoot, executionCommand)
     }
 
     /**
@@ -54,7 +56,12 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
             null
         } else {
             try {
-                hamlLint(collectedInfo.fileText, collectedInfo.contentRoot, collectedInfo.executionCommand)
+                hamlLint(
+                    collectedInfo.fileText,
+                    collectedInfo.filePath,
+                    collectedInfo.contentRoot,
+                    collectedInfo.executionCommand,
+                )
             } catch (e: ExecutionException) {
                 logger.error(e.message)
                 null

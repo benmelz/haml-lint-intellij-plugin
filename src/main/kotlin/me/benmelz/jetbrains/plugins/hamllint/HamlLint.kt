@@ -2,6 +2,7 @@ package me.benmelz.jetbrains.plugins.hamllint
 
 import com.google.gson.JsonParser
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ScriptRunnerUtil
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -11,42 +12,45 @@ import java.util.LinkedList
 /**
  * Executes haml-lint externally using the command line and parses its output.
  *
- * @param[haml] the raw haml text to run against.
- * @param[workDirectory] the work directory from which to run haml-lint.
- * @param[executionCommand] the execution command with which to run haml-lint.
+ * @param[haml] raw haml code to lint.
+ * @param[filePath] path to the file that is being linted.
+ * @param[workDirectory] work directory from which to run haml-lint.
+ * @param[executionCommand] execution command with which to run haml-lint.
  * @return a list of collected haml-lint offenses.
  */
 fun hamlLint(
     haml: CharSequence,
+    filePath: Path,
     workDirectory: Path,
     executionCommand: List<String>,
 ): List<HamlLintOffense> {
-    HamlLintTarget.createTempTarget(haml).use {
-        val cli = hamlLintCommandLine(it, workDirectory, executionCommand)
-        return parseHamlLintOutput(ScriptRunnerUtil.getProcessOutput(cli))
-    }
+    val cli = hamlLintCommandLine(filePath, workDirectory, executionCommand)
+    val processHandler = OSProcessHandler(cli)
+    val stdin = processHandler.processInput
+    haml.forEach { stdin.write(it.code) }
+    stdin.close()
+    return parseHamlLintOutput(
+        ScriptRunnerUtil.getProcessOutput(processHandler, ScriptRunnerUtil.STDOUT_OUTPUT_KEY_FILTER, 30000L),
+    )
 }
 
 /**
- * Builds an executable [GeneralCommandLine] that runs `haml-lint` against a given [HamlLintTarget] within a given
- * working directory within the context of `bundler`.
+ * Builds an executable [GeneralCommandLine] that runs `haml-lint` in stdin mode and the json reporter.
  *
- * @param[target] the [HamlLintTarget] to run against.
+ * @param[filePath] original file path for the code that is being linted.
  * @param[workDirectory] the directory from which to run `haml-lint`.
  * @param[executionCommand] the execution command with which to run haml-lint.
  * @return an executable [GeneralCommandLine].
  */
 private fun hamlLintCommandLine(
-    target: HamlLintTarget,
+    filePath: Path,
     workDirectory: Path,
     executionCommand: List<String>,
 ): GeneralCommandLine =
     GeneralCommandLine(executionCommand).apply {
-        this.addParameters("--reporter", "json", target.absolutePath)
+        this.addParameters("--stdin", filePath.toString(), "--reporter", "json")
         this.charset = StandardCharsets.UTF_8
         this.workDirectory = File(workDirectory.toUri())
-        val rubocopConfigPath = workDirectory.resolve(".rubocop.yml").toAbsolutePath().toString()
-        if (File(rubocopConfigPath).exists()) this.withEnvironment("HAML_LINT_RUBOCOP_CONF", rubocopConfigPath)
     }
 
 /**
