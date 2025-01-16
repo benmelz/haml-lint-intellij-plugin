@@ -6,6 +6,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.haml</depends>
+    <depends>org.jetbrains.plugins.ruby</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <localInspection language="Haml"
