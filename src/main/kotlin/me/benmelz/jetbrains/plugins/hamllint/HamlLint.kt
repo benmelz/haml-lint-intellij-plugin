@@ -2,12 +2,14 @@ package me.benmelz.jetbrains.plugins.hamllint
 
 import com.google.gson.JsonParser
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ScriptRunnerUtil
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleRootManager
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.LinkedList
+import java.util.*
+import org.jetbrains.plugins.ruby.gem.RubyGemExecutionContext
 
 /**
  * Executes haml-lint externally using the command line and parses its output.
@@ -19,14 +21,19 @@ import java.util.LinkedList
  * @return a list of collected haml-lint offenses.
  */
 fun hamlLint(
+    module: Module,
     haml: CharSequence,
     filePath: Path,
     workDirectory: Path,
-    executionCommand: List<String>,
 ): List<HamlLintOffense> {
-    val cli = hamlLintCommandLine(filePath, workDirectory, executionCommand)
-    val processHandler = OSProcessHandler(cli)
-    val stdin = processHandler.processInput
+    val moduleManager = ModuleRootManager.getInstance(module)
+    val sdk = moduleManager.sdk!!
+    val executionContext = RubyGemExecutionContext.create(sdk, "haml-lint")
+        .withModule(module)
+        .withWorkingDirPath(workDirectory.toString())
+        .withArguments("--stdin", filePath.toString(), "--reporter", "json")
+    val processHandler = executionContext.toRubyScriptExecutionContext()!!.createProcessHandler()!!
+    val stdin = processHandler.processInput!!
     haml.forEach { stdin.write(it.code) }
     stdin.close()
     return parseHamlLintOutput(

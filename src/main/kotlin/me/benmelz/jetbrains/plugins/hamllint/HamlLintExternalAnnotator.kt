@@ -32,6 +32,8 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         val configuration = getConfiguration(file)
         if (!(configuration.enabled)) return null
 
+        val module = ProjectFileIndex.getInstance(file.project).getModuleForFile(file.virtualFile) ?: return null
+
         val fileText = file.viewProvider.document.charsSequence
         val filePath = file.virtualFile.toNioPath()
 
@@ -42,7 +44,7 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         val executionCommand = configuration.executionCommand.split(" ").filter { it.isNotEmpty() }
         if (executionCommand.isEmpty()) return null
 
-        return HamlLintExternalAnnotatorInfo(fileText, filePath, contentRoot, executionCommand)
+        return HamlLintExternalAnnotatorInfo(module, fileText, filePath, contentRoot)
     }
 
     /**
@@ -57,10 +59,10 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         } else {
             try {
                 hamlLint(
+                    collectedInfo.module,
                     collectedInfo.fileText,
                     collectedInfo.filePath,
                     collectedInfo.contentRoot,
-                    collectedInfo.executionCommand,
                 )
             } catch (e: ExecutionException) {
                 logger.error(e.message)
