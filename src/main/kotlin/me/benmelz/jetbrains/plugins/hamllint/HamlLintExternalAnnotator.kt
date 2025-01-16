@@ -60,7 +60,6 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
                     collectedInfo.fileText,
                     collectedInfo.filePath,
                     collectedInfo.contentRoot,
-                    collectedInfo.executionCommand,
                 )
             } catch (e: ExecutionException) {
                 logger.error(e.message)

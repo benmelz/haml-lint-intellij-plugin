@@ -1,13 +1,15 @@
 package me.benmelz.jetbrains.plugins.hamllint
 
 import com.google.gson.JsonParser
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ScriptRunnerUtil
-import java.io.File
-import java.nio.charset.StandardCharsets
+import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.project.ProjectLocator
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.vfs.LocalFileSystem
 import java.nio.file.Path
 import java.util.LinkedList
+import org.jetbrains.plugins.ruby.gem.RubyGemExecutionContext
 
 /**
  * Executes haml-lint externally using the command line and parses its output.
@@ -15,18 +17,15 @@ import java.util.LinkedList
  * @param[haml] raw haml code to lint.
  * @param[filePath] path to the file that is being linted.
  * @param[workDirectory] work directory from which to run haml-lint.
- * @param[executionCommand] execution command with which to run haml-lint.
  * @return a list of collected haml-lint offenses.
  */
 fun hamlLint(
     haml: CharSequence,
     filePath: Path,
     workDirectory: Path,
-    executionCommand: List<String>,
 ): List<HamlLintOffense> {
-    val cli = hamlLintCommandLine(filePath, workDirectory, executionCommand)
-    val processHandler = OSProcessHandler(cli)
-    val stdin = processHandler.processInput
+    val processHandler = hamlLintProcessHandler(filePath, workDirectory)
+    val stdin = processHandler.processInput!!
     haml.forEach { stdin.write(it.code) }
     stdin.close()
     return parseHamlLintOutput(
@@ -35,23 +34,29 @@ fun hamlLint(
 }
 
 /**
- * Builds an executable [GeneralCommandLine] that runs `haml-lint` in stdin mode and the json reporter.
+ * Builds an executable [ProcessHandler] that runs `haml-lint` in stdin mode and the json reporter.
  *
  * @param[filePath] original file path for the code that is being linted.
  * @param[workDirectory] the directory from which to run `haml-lint`.
- * @param[executionCommand] the execution command with which to run haml-lint.
- * @return an executable [GeneralCommandLine].
+ * @return an executable [ProcessHandler].
  */
-private fun hamlLintCommandLine(
+private fun hamlLintProcessHandler(
     filePath: Path,
     workDirectory: Path,
-    executionCommand: List<String>,
-): GeneralCommandLine =
-    GeneralCommandLine(executionCommand).apply {
-        this.addParameters("--stdin", filePath.toString(), "--reporter", "json")
-        this.charset = StandardCharsets.UTF_8
-        this.workDirectory = File(workDirectory.toUri())
-    }
+): ProcessHandler {
+    val virtualFile = LocalFileSystem.getInstance().findFileByPath(filePath.toString())!!
+    val project = ProjectLocator.getInstance().guessProjectForFile(virtualFile)!!
+    val module = ModuleUtil.findModuleForFile(virtualFile, project)!!
+    val moduleManager = ModuleRootManager.getInstance(module)
+    val sdk = moduleManager.sdk!!
+    val executionContext =
+        RubyGemExecutionContext
+            .create(sdk, "haml-lint")
+            .withModule(module)
+            .withWorkingDirPath(workDirectory.toString())
+            .withArguments("--stdin", filePath.toString(), "--reporter", "json")
+    return executionContext.toRubyScriptExecutionContext()!!.createProcessHandler()!!
+}
 
 /**
  * Parses the output of a `haml-lint` run using the `json` reporter as [HamlLintOffense]s.
