@@ -5,7 +5,7 @@ gson= "2.12.1"
 # plugins
 changelog = "2.2.1"
 intellijPlatform = "2.3.0"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 ktlint = "12.2.0"
 
 [libraries]
