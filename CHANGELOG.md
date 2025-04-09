@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.3.4...v2.0.0) (2025-04-09)
+
+
+* fix!: require 242.2 and unpin compatibility range (#109) ([a0305cc](https://github.com/benmelz/haml-lint-intellij-plugin/commit/a0305cc902db722212e23c44a714fe1720071498)), closes [#109](https://github.com/benmelz/haml-lint-intellij-plugin/issues/109)
+* fix!: use --stdin haml-lint option (#105) ([08c531b](https://github.com/benmelz/haml-lint-intellij-plugin/commit/08c531b9d0bbdd90035cc961d2f1a601b39548b4)), closes [#105](https://github.com/benmelz/haml-lint-intellij-plugin/issues/105)
+
+
+### Features
+
+* use ruby sdk to find haml-lint executable ([#107](https://github.com/benmelz/haml-lint-intellij-plugin/issues/107)) ([0160781](https://github.com/benmelz/haml-lint-intellij-plugin/commit/0160781ed0a3a34612441b9bec2617887a277a50))
+
+
+### BREAKING CHANGES
+
+* require IU build 242.2+
+* plugin now requires `haml-lint >= 0.54.0`
+
 ## [1.3.4](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.3.3...v1.3.4) (2025-01-15)
 
 
