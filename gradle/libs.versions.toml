@@ -6,7 +6,7 @@ gson= "2.13.1"
 changelog = "2.2.1"
 intellijPlatform = "2.6.0"
 kotlin = "2.1.21"
-ktlint = "12.3.0"
+ktlint = "13.0.0"
 
 [libraries]
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
