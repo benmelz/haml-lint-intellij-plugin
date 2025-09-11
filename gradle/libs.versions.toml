@@ -1,6 +1,6 @@
 [versions]
 # libraries
-gson= "2.13.1"
+gson= "2.13.2"
 
 # plugins
 changelog = "2.4.0"
