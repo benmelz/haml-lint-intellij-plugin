@@ -24,7 +24,7 @@ to enforce code style and `semantic-release` is used to release packages/publish
 
 ```bash
 ./gradlew check        # builds the plugin, runs linters and tests
-./gradelw verifyPlugin # builds the plugin, verifies compatibility with IDE releases
+./gradlew verifyPlugin # builds the plugin, verifies compatibility with IDE releases
 ./gradlew runIde       # builds the plugin, starts up an IDE for manual testing
 ```
 
