@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v2.0.0...v2.0.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* bump gson to 2.13.2 ([#163](https://github.com/benmelz/haml-lint-intellij-plugin/issues/163)) ([31f5308](https://github.com/benmelz/haml-lint-intellij-plugin/commit/31f5308543171d473e1da25b0447a478bce1f021))
+
 # [2.0.0](https://github.com/benmelz/haml-lint-intellij-plugin/compare/v1.3.4...v2.0.0) (2025-04-10)
 
 
