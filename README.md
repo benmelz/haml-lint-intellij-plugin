@@ -23,8 +23,9 @@ matching the targeted version in
 to enforce code style and `semantic-release` is used to release packages/publish to the marketplace.
 
 ```bash
-./gradlew check       # builds the plugin, runs linters and tests
-./gradlew runIde      # builds the plugin, starts up an IDE for manual testing
+./gradlew check        # builds the plugin, runs linters and tests
+./gradlew verifyPlugin # builds the plugin, verifies compatibility with IDE releases
+./gradlew runIde       # builds the plugin, starts up an IDE for manual testing
 ```
 
 ## License

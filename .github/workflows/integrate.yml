@@ -1,0 +1,27 @@
+name: integrate
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  kotest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v5
+      - run: ./gradlew test
+  ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: adopt
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v5
+      - run: ./gradlew ktlintCheck
