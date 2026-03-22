@@ -118,8 +118,14 @@ class HamlLintExternalAnnotator : ExternalAnnotator<HamlLintExternalAnnotatorInf
         val configuration = getConfiguration(file)
         val severityKey =
             when (severity) {
-                "warning" -> configuration.warningSeverityKey
-                "error" -> configuration.errorSeverityKey
+                "warning" -> {
+                    configuration.warningSeverityKey
+                }
+
+                "error" -> {
+                    configuration.errorSeverityKey
+                }
+
                 else -> {
                     logger.error("Unrecognized severity: $severity")
                     null
